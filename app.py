@@ -3,34 +3,45 @@ import streamlit as st
 from chromadb import PersistentClient
 from sentence_transformers import SentenceTransformer
 import ollama
+from pdf_ingest import ingest_pdf
+import tempfile
+import os
 
-# Page config
-st.set_page_config(page_title="Personal Knowledge Assistant", layout="centered")
+st.set_page_config(page_title="PDF Knowledge Assistant", layout="centered")
+st.title(" PDF Knowledge Assistant (RAG)")
 
-st.title("🧠 Personal Knowledge Assistant")
-st.write("Ask questions based on your personal notes using RAG.")
-
-# Load embedding model (once)
 @st.cache_resource
 def load_embedding_model():
     return SentenceTransformer("all-MiniLM-L6-v2")
 
 embedding_model = load_embedding_model()
 
-# Connect to persistent ChromaDB
 client = PersistentClient(path="chroma_db")
-collection = client.get_or_create_collection(
-    name="personal_knowledge_base"
-)
+collection = client.get_or_create_collection(name="personal_knowledge_base")
 
-# User input
-question = st.text_input("Ask a question:")
+# ---- PDF Upload ----
+st.subheader("Upload a PDF")
+uploaded_file = st.file_uploader("Choose a PDF", type="pdf")
+
+if uploaded_file:
+    with tempfile.NamedTemporaryFile(delete=False, suffix=".pdf") as tmp:
+        tmp.write(uploaded_file.read())
+        tmp_path = tmp.name
+
+    if st.button("Ingest PDF"):
+        with st.spinner("Ingesting PDF..."):
+            ingest_pdf(tmp_path)
+        st.success("PDF ingested successfully!")
+        os.remove(tmp_path)
+
+st.divider()
+
+# ---- Question Answering ----
+question = st.text_input("Ask a question from the uploaded PDF:")
 
 if st.button("Get Answer") and question.strip():
-    # Embed question
     query_embedding = embedding_model.encode(question).tolist()
 
-    # Retrieve relevant chunks
     results = collection.query(
         query_embeddings=[query_embedding],
         n_results=3
@@ -39,7 +50,7 @@ if st.button("Get Answer") and question.strip():
     retrieved_docs = results["documents"][0]
 
     if not retrieved_docs:
-        st.warning("No relevant information found.")
+        st.warning("No relevant content found.")
     else:
         context = "\n\n".join(retrieved_docs)
 
