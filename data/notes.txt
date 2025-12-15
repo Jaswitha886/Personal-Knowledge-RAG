@@ -1,0 +1,41 @@
+RAG stands for Retrieval-Augmented Generation. 
+It is used to improve the accuracy of large language models by allowing them to retrieve information from external knowledge sources instead of relying only on their internal memory.
+
+Large language models often hallucinate when they do not know an answer or when the required information is not present in their training data. 
+RAG helps reduce hallucinations by grounding the model’s responses in retrieved documents.
+
+RAG works in two main stages: retrieval and generation. 
+In the retrieval stage, relevant information is fetched from an external database. 
+In the generation stage, the language model uses that retrieved information to generate a final answer.
+
+Embeddings are numerical representations of text that capture semantic meaning. 
+They allow computers to understand similarity between different pieces of text even if the wording is different.
+
+Vector databases are databases designed to store embeddings and perform similarity search. 
+Instead of searching exact keywords, they find text with similar meaning.
+
+ChromaDB is a vector database commonly used in RAG systems. 
+It stores embeddings along with the original text and retrieves the most relevant chunks based on semantic similarity.
+
+Chunking is the process of splitting large documents into smaller pieces. 
+Smaller chunks improve retrieval accuracy and help the language model focus on precise information.
+
+In a RAG system, documents are first chunked and converted into embeddings. 
+These embeddings are stored in a vector database like ChromaDB for efficient retrieval.
+
+When a user asks a question, the question is also converted into an embedding. 
+The vector database compares this embedding with stored embeddings to find the most relevant information.
+
+The retrieved text chunks are passed to a language model as context. 
+The language model generates an answer based only on this context, which improves correctness and reliability.
+
+RAG is often preferred over fine-tuning for frequently changing data. 
+This is because RAG is cheaper, easier to update, and does not require retraining the language model.
+
+Fine-tuning modifies the internal weights of a language model. 
+RAG keeps the model unchanged and instead supplies external knowledge dynamically.
+
+Common applications of RAG include chatbots for documents, personal knowledge assistants, customer support systems, and internal company knowledge bases.
+
+A personal knowledge assistant uses RAG to store and retrieve a user’s own notes and learning materials. 
+It helps answer questions accurately based on the user’s stored knowledge rather than general internet data.
