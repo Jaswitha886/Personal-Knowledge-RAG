@@ -14,9 +14,6 @@ collection = client.get_or_create_collection(
     name="personal_knowledge_base"
 )
 
-# Debug check (you can remove later)
-print(client.list_collections())
-
 # Ask question
 question = input("Ask a question: ")
 
